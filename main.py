@@ -7,6 +7,7 @@ gaussiano = array([ [1,2,1],[2,4,2],[1,2,1] ])
 LoG = [sharpLaplaciano, gaussiano]
 
 cruz = array([[0,1,0],[1,1,1],[0,1,0]])
+losango = array([ [0,0,1,0,0], [0,1,1,1,0], [1,1,1,1,1], [0,1,1,1,0], [0,0,1,0,0] ])
 
 def binarizacao(imagem, limiar = 128):
 	'''Binariza uma imagem, preferencialmente em escala de cinza, 
@@ -25,6 +26,7 @@ def escalaCinza(imagem):
 	return imagem
 
 def negacao(imagem):
+	'''Retorna a imagem binarizada complementar.'''
 	nova_imagem = imagem.copy()
 	nova_imagem[imagem > 0] = 0
 	nova_imagem[imagem == 0] = 255
@@ -41,6 +43,36 @@ def dilatacao(imagem, elementoEstruturante=cruz):
 	n_imagem = negacao(imagem)
 	n_imagem = erosao(n_imagem, elementoEstruturante)
 	return negacao(n_imagem)
+
+def abertura(imagem, elementoEstruturante=cruz):
+	'''Usado para reducao de ruidos.'''
+	return dilatacao(erosao(imagem, elementoEstruturante), elementoEstruturante)
+
+def fechamento(imagem, elementoEstruturante=cruz):
+	'''Usado para "fechamento" de buracos.'''
+	return erosao(dilatacao(imagem, elementoEstruturante), elementoEstruturante)
+
+def menos(imagem1, imagem2):
+	'''Usado na imagem binarizada para realizar a operacao de substracao,
+	  necessaria em alguns filtros.'''
+	resultado = zeros(imagem1.shape)
+	resultado[ logical_and(imagem1 > 0, imagem2 == 0) ] = 255
+	return resultado
+
+def gradienteMorfologico1(imagem, elementoEstruturante=cruz):
+	'''Usado para localizacao de fronteiras internas 
+	usando-se um filtro de erosao.'''
+	return menos(imagem, erosao(imagem,elementoEstruturante))
+
+def gradienteMorfologico2(imagem, elementoEstruturante=cruz):
+	'''Usado para localizacao de fronteiras externas
+	usando-se um filtro de dilatacao..'''
+	return menos(dilatacao(imagem,elementoEstruturante), imagem)
+
+def gradienteMorfologico3(imagem, elementoEstruturante=cruz):
+	'''Usado para localizacao de fronteiras internas e externas.
+	usando-se ambos os filtros de erosao e dilatacao.'''
+	return menos(dilatacao(imagem,elementoEstruturante), erosao(imagem, elementoEstruturante))
 
 def convolucao(imagem, mascaras):
 	'''Retorna o resultado da convolucao da imagem com as mascaras 
@@ -124,15 +156,16 @@ def tratamento(imagem):
 	imagem = imagem.copy()
 	imagem = convolucao(imagem, LoG )
 	imagem = escalaCinza(imagem)
-	imagem = binarizacao(imagem, 128)
+	imagem = binarizacao(imagem, 89)
+	
 	return imagem
 
 if __name__ == '__main__':
-	imagemInicial, imagemFinal = carregaImagem('pessoa1.jpg'), carregaImagem('pessoa1.jpg')
+	imagemInicial, imagemFinal = carregaImagem('pessoa1.jpg'), carregaImagem('pessoa14.jpg')
 	imagemInicial, imagemFinal = centralizacao(imagemInicial, imagemFinal)
 	imagemInicial, imagemFinal = tratamento(imagemInicial), tratamento(imagemFinal)
 
-	imagemInicial, imagemFinal = dilatacao(imagemInicial), erosao(imagemFinal)
+	#imagemInicial, imagemFinal = gradienteMorfologico2(imagemInicial,losango), gradienteMorfologico2(imagemFinal,losango)
 
-	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10, delay=3)
+	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10, delay=4)
 	criaGif('resultado.gif', frames)
