@@ -6,6 +6,14 @@ laplaciano = - array([[1,1,1], [1, -8, 1], [1, 1, 1]])
 gaussiano = array([ [1,2,1],[2,4,2],[1,2,1] ])
 LoG = [sharpLaplaciano, gaussiano]
 
+def binarizacao(imagem, limiar = 128):
+	'''Binariza uma imagem, preferencialmente em escala de cinza, 
+	usando o limiar como ponto de corte.'''
+	imagem = imagem.copy()
+	imagem[imagem >= limiar] = 255
+	imagem[imagem < limiar] = 0
+	return imagem
+
 def escalaCinza(imagem):
 	'''Retorna uma nova imagem com a escala de cinza nas 3 camadas.
 	https://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale'''
@@ -52,7 +60,7 @@ def carregaImagem(nomeArquivo):
 	''' Retorna uma matriz do numpy, carregada do arquivo de imagem especificado. '''
 	return imread(nomeArquivo)
 
-def tratamento(img1, img2):
+def centralizacao(img1, img2):
 	'''Iguala as dimensoes de cada imagem, arredondando para cima, 
 		centralizando-se e completando com preto.'''
 	x1,y1,_ = shape(img1)
@@ -73,8 +81,8 @@ def tratamento(img1, img2):
 	return img1, img2
 
 def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=3):
-	'''Retorna uma lista de frames que sao o resultado da transformacao de uma imagem na outra linearmente'''
-	imagemInicial, imagemFinal = tratamento(imagemInicial, imagemFinal)
+	'''Retorna uma lista de frames que sao o resultado da transformacao 
+	de uma imagem na outra linearmente. Espera-se imagens de mesmo tamanho.'''
 
 	frames = [imagemInicial] * delay
 	passo = (imagemFinal - imagemInicial)/numPassos
@@ -88,8 +96,17 @@ def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=3):
 
 	return frames + [imagemFinal]*delay
 
+def tratamento(imagem):
+	'''Funcao utilitaria que agrega todos os tratamentos feitos na imagem para teste'''
+	imagem = imagem.copy()
+	imagem = escalaCinza(imagem)
+	imagem = convolucao(imagem, LoG )
+	imagem = binarizacao(imagem)
+	return imagem
+
 if __name__ == '__main__':
-	imagemInicial, imagemFinal = escalaCinza(carregaImagem('aecio.jpg')), escalaCinza(carregaImagem('dilma.jpg'))
-	imagemInicial, imagemFinal = convolucao(imagemInicial, LoG ), convolucao(imagemFinal, LoG )
+	imagemInicial, imagemFinal = carregaImagem('pessoa14.jpg'), carregaImagem('pessoa1.jpg')
+	imagemInicial, imagemFinal = centralizacao(imagemInicial, imagemFinal)
+	imagemInicial, imagemFinal = tratamento(imagemInicial), tratamento(imagemFinal)
 	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10)
 	criaGif('resultado.gif', frames)
