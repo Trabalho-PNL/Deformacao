@@ -1,6 +1,40 @@
 from numpy import *
 from imageio import mimsave, imread
 
+sharpLaplaciano = array([[0, 4, 0], [4, -20, 4], [0, 4, 0]])
+laplaciano = - array([[1,1,1], [1, -8, 1], [1, 1, 1]])
+gaussiano = array([ [1,2,1],[2,4,2],[1,2,1] ])
+LoG = [sharpLaplaciano, gaussiano]
+
+def convolucao(imagem, mascaras):
+	'''Retorna o resultado da convolucao da imagem com as mascaras 
+	usando a Transformada de Fourrier.'''
+
+	if type(mascaras) is not list:
+		mascaras = [mascaras]
+
+	imagem = imagem.copy()
+	for mascara in mascaras:
+		#Calcula a Transformada 2D de cada camada da imagem
+		f_im = fft.fft2(imagem, axes = (0,1))
+
+		#Normaliza mascara se necessario
+		soma = sum(mascara)*1.0
+		if soma != 0:
+			mascara = mascara/soma
+
+      	#forca a mascara a ser do tamanho da imagem
+		f_mascara = fft.fft2(mascara, s=(f_im.shape[0], f_im.shape[1]) )
+
+		for l in range(3):
+			f_convolucao = f_mascara * f_im[:,:,l]
+			camada = fft.ifft2(f_convolucao)
+			camada[camada < 0 ] = 0
+			camada[camada > 255 ] = 255
+			imagem[:,:,l] = real(camada)
+
+	return imagem
+
 def criaGif(nomeArquivo, imagens, duracaoFrames=0.5):
 	'''Binding para a funcao de save da biblioteca imageio, 
 		que recebe a lista de imagens e as salva como um .GIF'''
@@ -48,5 +82,6 @@ def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=3):
 
 if __name__ == '__main__':
 	imagemInicial, imagemFinal = carregaImagem('aecio.jpg'), carregaImagem('dilma.jpg')
+	imagemInicial, imagemFinal = convolucao(imagemInicial, LoG ), convolucao(imagemFinal, LoG )
 	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10)
 	criaGif('resultado.gif', frames)
