@@ -6,6 +6,14 @@ laplaciano = - array([[1,1,1], [1, -8, 1], [1, 1, 1]])
 gaussiano = array([ [1,2,1],[2,4,2],[1,2,1] ])
 LoG = [sharpLaplaciano, gaussiano]
 
+def escalaCinza(imagem):
+	'''Retorna uma nova imagem com a escala de cinza nas 3 camadas.
+	https://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale'''
+	imagem = imagem.copy()
+	imagem[:,:,0] = 0.2126*imagem[:,:,0] + 0.7152*imagem[:,:,1] + 0.0722*imagem[:,:,2]
+	imagem[:,:,1], imagem[:,:,2] = imagem[:,:,0], imagem[:,:,0]
+	return imagem
+
 def convolucao(imagem, mascaras):
 	'''Retorna o resultado da convolucao da imagem com as mascaras 
 	usando a Transformada de Fourrier.'''
@@ -81,7 +89,7 @@ def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=3):
 	return frames + [imagemFinal]*delay
 
 if __name__ == '__main__':
-	imagemInicial, imagemFinal = carregaImagem('aecio.jpg'), carregaImagem('dilma.jpg')
+	imagemInicial, imagemFinal = escalaCinza(carregaImagem('aecio.jpg')), escalaCinza(carregaImagem('dilma.jpg'))
 	imagemInicial, imagemFinal = convolucao(imagemInicial, LoG ), convolucao(imagemFinal, LoG )
 	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10)
 	criaGif('resultado.gif', frames)
