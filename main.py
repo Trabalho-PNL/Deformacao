@@ -1,10 +1,12 @@
 from numpy import *
-from imageio import mimsave, imread
+from imageio import mimsave, imread, core
 
 sharpLaplaciano = array([[0, 4, 0], [4, -20, 4], [0, 4, 0]])
 laplaciano = - array([[1,1,1], [1, -8, 1], [1, 1, 1]])
 gaussiano = array([ [1,2,1],[2,4,2],[1,2,1] ])
 LoG = [sharpLaplaciano, gaussiano]
+
+cruz = array([[0,1,0],[1,1,1],[0,1,0]])
 
 def binarizacao(imagem, limiar = 128):
 	'''Binariza uma imagem, preferencialmente em escala de cinza, 
@@ -21,6 +23,24 @@ def escalaCinza(imagem):
 	imagem[:,:,0] = 0.2126*imagem[:,:,0] + 0.7152*imagem[:,:,1] + 0.0722*imagem[:,:,2]
 	imagem[:,:,1], imagem[:,:,2] = imagem[:,:,0], imagem[:,:,0]
 	return imagem
+
+def negacao(imagem):
+	nova_imagem = imagem.copy()
+	nova_imagem[imagem > 0] = 0
+	nova_imagem[imagem == 0] = 255
+	return nova_imagem
+
+def erosao(imagem, elementoEstruturante=cruz):
+	image = imagem.copy()
+	imagem = convolucao(imagem, elementoEstruturante )
+	imagem[imagem>0] = 255
+	imagem[imagem==0] = 0
+	return imagem
+
+def dilatacao(imagem, elementoEstruturante=cruz):
+	n_imagem = negacao(imagem)
+	n_imagem = erosao(n_imagem, elementoEstruturante)
+	return negacao(n_imagem)
 
 def convolucao(imagem, mascaras):
 	'''Retorna o resultado da convolucao da imagem com as mascaras 
@@ -80,33 +100,39 @@ def centralizacao(img1, img2):
 	img2 = pad(img2, ( ( (dx2+1)//2, (dx2)//2 ), ( (dy2+1)//2, (dy2)//2 ), (0,0) ), mode='constant' )
 	return img1, img2
 
-def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=3):
+def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=1):
 	'''Retorna uma lista de frames que sao o resultado da transformacao 
 	de uma imagem na outra linearmente. Espera-se imagens de mesmo tamanho.'''
 
-	frames = [imagemInicial] * delay
-	passo = (imagemFinal - imagemInicial)/numPassos
-	
-	#Aparentemente nessa situacoes o python 
-	#copia apenas a referencia para a lista, entao deve-se forcar uma copia
-	atual = imagemInicial.copy()
-	for i in range(numPassos):
-		atual += passo
-		frames.append( around( atual.copy() ) )
+	if delay<=0:
+		delay=1
 
-	return frames + [imagemFinal]*delay
+	frames = [imagemInicial] * delay
+	passo = (1.0*imagemFinal - imagemInicial )/numPassos
+	
+
+	for i in range(numPassos):
+		#POR QUE SO FUNCIONA COM ESSE SINAL DE MENOS?
+		im = around(-(imagemInicial + passo*i))
+		frames += [im]
+
+	frames = frames + [imagemFinal]*delay
+	return frames
 
 def tratamento(imagem):
 	'''Funcao utilitaria que agrega todos os tratamentos feitos na imagem para teste'''
 	imagem = imagem.copy()
-	imagem = escalaCinza(imagem)
 	imagem = convolucao(imagem, LoG )
-	imagem = binarizacao(imagem)
+	imagem = escalaCinza(imagem)
+	imagem = binarizacao(imagem, 128)
 	return imagem
 
 if __name__ == '__main__':
-	imagemInicial, imagemFinal = carregaImagem('pessoa14.jpg'), carregaImagem('pessoa1.jpg')
+	imagemInicial, imagemFinal = carregaImagem('pessoa1.jpg'), carregaImagem('pessoa1.jpg')
 	imagemInicial, imagemFinal = centralizacao(imagemInicial, imagemFinal)
 	imagemInicial, imagemFinal = tratamento(imagemInicial), tratamento(imagemFinal)
-	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10)
+
+	imagemInicial, imagemFinal = dilatacao(imagemInicial), erosao(imagemFinal)
+
+	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10, delay=3)
 	criaGif('resultado.gif', frames)
