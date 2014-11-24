@@ -1,5 +1,5 @@
 from numpy import *
-from imageio import mimsave, imread, core
+from imageio import mimsave, imread, imsave
 
 sharpLaplaciano = array([[0, 4, 0], [4, -20, 4], [0, 4, 0]])
 laplaciano = - array([[1,1,1], [1, -8, 1], [1, 1, 1]])
@@ -8,6 +8,26 @@ LoG = [sharpLaplaciano, gaussiano]
 
 cruz = array([[0,1,0],[1,1,1],[0,1,0]])
 losango = array([ [0,0,1,0,0], [0,1,1,1,0], [1,1,1,1,1], [0,1,1,1,0], [0,0,1,0,0] ])
+
+def binarizacaoAdaptativa(imagem, tamGrid, limiar):
+	'''Binariza a imagem com base na media de valores dos pixels vizinhos.
+	Precisa melhorar as situacoes de borda.
+	http://homepages.inf.ed.ac.uk/rbf/HIPR2/adpthrsh.htm'''
+	m,n,_ = shape(imagem)
+	resultado = imagem.copy()
+	
+	for i in range( tamGrid//2, m - tamGrid//2 ):
+		for j in range( tamGrid//2, n - tamGrid//2  ):
+			xi, xf = i - tamGrid//2, i + tamGrid//2
+			yi, yf = j - tamGrid//2, j + tamGrid//2
+			media = mean(imagem[xi:xf, yi:yf, 0])
+			
+			if imagem[i, j, 0] > (media - limiar):
+				resultado[i,j, 0], resultado[i,j, 1], resultado[i,j, 2] = 0,0,0
+			else:
+				resultado[i,j, 0], resultado[i,j, 1], resultado[i,j, 2] = 255,255,255
+			
+	return resultado
 
 def binarizacao(imagem, limiar = 128):
 	'''Binariza uma imagem, preferencialmente em escala de cinza, 
@@ -54,9 +74,11 @@ def fechamento(imagem, elementoEstruturante=cruz):
 
 def menos(imagem1, imagem2):
 	'''Usado na imagem binarizada para realizar a operacao de substracao,
-	  necessaria em alguns filtros.'''
-	resultado = zeros(imagem1.shape)
-	resultado[ logical_and(imagem1 > 0, imagem2 == 0) ] = 255
+	  necessaria em alguns filtros. Acho que nao funciona ainda.'''
+	resultado = imagem1.copy()
+	condicao = logical_and(imagem1 > 0, imagem2 == 0)
+	resultado[ condicao ] = 255
+	resultado[ invert(condicao) ] = 0
 	return resultado
 
 def gradienteMorfologico1(imagem, elementoEstruturante=cruz):
@@ -132,12 +154,9 @@ def centralizacao(img1, img2):
 	img2 = pad(img2, ( ( (dx2+1)//2, (dx2)//2 ), ( (dy2+1)//2, (dy2)//2 ), (0,0) ), mode='constant' )
 	return img1, img2
 
-def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=1):
+def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=0):
 	'''Retorna uma lista de frames que sao o resultado da transformacao 
 	de uma imagem na outra linearmente. Espera-se imagens de mesmo tamanho.'''
-
-	if delay<=0:
-		delay=1
 
 	frames = [imagemInicial] * delay
 	passo = (1.0*imagemFinal - imagemInicial )/numPassos
@@ -145,7 +164,7 @@ def deformacaoBasica(imagemInicial, imagemFinal, numPassos, delay=1):
 
 	for i in range(numPassos):
 		#POR QUE SO FUNCIONA COM ESSE SINAL DE MENOS?
-		im = around(-(imagemInicial + passo*i))
+		im = around(-1.0*(imagemInicial + passo*i))
 		frames += [im]
 
 	frames = frames + [imagemFinal]*delay
@@ -156,16 +175,20 @@ def tratamento(imagem):
 	imagem = imagem.copy()
 	imagem = convolucao(imagem, LoG )
 	imagem = escalaCinza(imagem)
-	imagem = binarizacao(imagem, 89)
-	
+	#imagem = binarizacao(imagem, 89)
+	imagem = binarizacaoAdaptativa(imagem, 33, 15)
+	imagem = abertura(imagem, losango)
+
 	return imagem
 
 if __name__ == '__main__':
-	imagemInicial, imagemFinal = carregaImagem('pessoa1.jpg'), carregaImagem('pessoa14.jpg')
+	imagemInicial, imagemFinal = carregaImagem('pessoa1.jpg'), carregaImagem('pessoa1.jpg')
 	imagemInicial, imagemFinal = centralizacao(imagemInicial, imagemFinal)
 	imagemInicial, imagemFinal = tratamento(imagemInicial), tratamento(imagemFinal)
 
-	#imagemInicial, imagemFinal = gradienteMorfologico2(imagemInicial,losango), gradienteMorfologico2(imagemFinal,losango)
+	imagemInicial =  gradienteMorfologico1(imagemInicial,cruz)
+	imsave('im1.jpg', imagemInicial)
+	imsave('im2.jpg', imagemFinal)
 
 	frames = deformacaoBasica(imagemInicial, imagemFinal, numPassos=10, delay=4)
 	criaGif('resultado.gif', frames)
