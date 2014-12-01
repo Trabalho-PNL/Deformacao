@@ -1,27 +1,29 @@
 from numpy import *
 from imageio import mimsave, imsave, imread
+from point import Point
+from line import Line
 
 #semelhante1
 pontosImagemOrigem  = { 
-	"cabeca" :  [ [128, 67], [80, 87], [40, 120], [30, 170], [40, 223], [80, 258], [128,268] ],
-	"maxilar": [ [147, 115], [188, 116], [220, 132], [235, 155], [235, 192], [220, 209], [188, 224], [147, 230] ],
-	"boca": [ [195, 150], [193, 163], [192, 173], [193, 183], [195, 195] ],
-	"olhoEsquerdo": [ [134, 134], [125, 147], [134, 160], [138, 147] ],
-	"olhoDireito": [ [135, 193], [128, 205], [135, 218] ,[140, 205] ],
-	"nariz": [ [171, 166], [172, 185] ],
-	"pescoco": [ [261, 115], [287, 129], [287, 172], [287, 206], [260, 219] ]
+	"cabeca" :  [ Point(128, 67), Point(80, 87), Point(40, 120), Point(30, 170), Point(40, 223), Point(80, 258), Point(128,268) ],
+	"maxilar": [ Point(147, 115), Point(188, 116), Point(220, 132), Point(235, 155), Point(235, 192), Point(220, 209), Point(188, 224), Point(147, 230) ],
+	"boca": [ Point(195, 150), Point(193, 163), Point(192, 173), Point(193, 183), Point(195, 195) ],
+	"olhoEsquerdo": [ Point(134, 134), Point(125, 147), Point(134, 160), Point(138, 147) ],
+	"olhoDireito": [ Point(135, 193), Point(128, 205), Point(135, 218) ,Point(140, 205) ],
+	"nariz": [ Point(171, 166), Point(172, 185) ],
+	"pescoco": [ Point(261, 115), Point(287, 129), Point(287, 172), Point(287, 206), Point(260, 219) ]
 
 }
 
 #semelhante2
 pontosImagemDestino = { 
-	"cabeca": [ [107, 85], [63, 76], [14, 115], [5, 167], [14, 223], [63, 251], [107, 252] ],
-	"maxilar": [ [132, 107], [183, 113], [218, 123] ,[234, 143], [234, 186], [218, 202], [183, 220], [132, 225] ],
-	"boca": [ [198, 148], [197, 155], [197, 162], [197, 169], [198, 178] ],
-	"olhoEsquerdo": [ [138, 123], [130, 136], [138, 146], [143, 136] ],
-	"olhoDireito": [ [135, 180], [130, 191], [135, 200], [140, 191] ],
-	"nariz": [ [171, 151], [171, 170] ],
-	"pescoco": [ [242, 114], [275, 123], [285, 164], [275, 205], [242, 222] ]
+	"cabeca": [ Point(107, 85), Point(63, 76), Point(14, 115), Point(5, 167), Point(14, 223), Point(63, 251), Point(107, 252) ],
+	"maxilar": [ Point(132, 107), Point(183, 113), Point(218, 123) ,Point(234, 143), Point(234, 186), Point(218, 202), Point(183, 220), Point(132, 225) ],
+	"boca": [ Point(198, 148), Point(197, 155), Point(197, 162), Point(197, 169), Point(198, 178) ],
+	"olhoEsquerdo": [ Point(138, 123), Point(130, 136), Point(138, 146), Point(143, 136) ],
+	"olhoDireito": [ Point(135, 180), Point(130, 191), Point(135, 200), Point(140, 191) ],
+	"nariz": [ Point(171, 151), Point(171, 170) ],
+	"pescoco": [ Point(242, 114), Point(275, 123), Point(285, 164), Point(275, 205), Point(242, 222) ]
 }
 
 def marcaPontosNaImagem(imagem, jsonPontosMarcados):
@@ -31,7 +33,7 @@ def marcaPontosNaImagem(imagem, jsonPontosMarcados):
 	for key in jsonPontosMarcados:
 		for pontoInteresse in jsonPontosMarcados[key]:
 			for canal in range(canaisImagem):
-				imagem[pontoInteresse[0], pontoInteresse[1], canal] = 255
+				imagem[pontoInteresse.x, pontoInteresse.y, canal] = 255
 
 	return imagem
 
