@@ -29,6 +29,13 @@ class Line():
 			projecao = self.ponto_inicial + vetorDirecao * t
 			return ponto.distancia(projecao)
 
+	def perpendicular(self):
+		vetorPerpendicular = self.ponto_final - self.ponto_inicial
+		return Point(vetorPerpendicular.y, vetorPerpendicular.x)
+
+	def tamanhoLinha(self):
+		return self.ponto_final - self.ponto_inicial
+
 if __name__ == "__main__":
 	l1 = Line(Point(0.0, 0.0), Point(0.0, 2.0))
 	l2 = Line(Point(0.0, 2.0), Point(0.0, 5.0))

@@ -37,8 +37,29 @@ def marcaPontosNaImagem(imagem, jsonPontosMarcados):
 
 	return imagem
 
+def calculateU(pontoX, pontoP, pontoQ):
+	return ((pontoX - pontoP).produtoEscalar(pontoQ - pontoP))/(pontoQ - pontoP).norma()**2
+
+def calculateV(linhaPQ, pontoX):
+	return (pontoX - linhaPQ.ponto_inicial).produtoEscalar(linhaPQ.perpendicular())/(linhaPQ.ponto_inicial - linhaPQ.ponto_final).norma()
+def calculateXlinha(u, v, linhaPQ):
+	return linhaPQ.ponto_inicial + linhaPQ.tamanhoLinha() * u + (linhaPQ.perpendicular() * v)/linhaPQ.tamanhoLinha().norma()
 
 if __name__ == "__main__":
+
+	X = Point(4.0,3.0)
+	P = Point(2.0,1.0)
+	Q = Point(2.0,4.0)
+	Plinha = Point(5.0, 1.0)
+	Qlinha = Point(5.0, 4.0)
+
+	U = calculateU(X, P, Q)
+	V = calculateV(Line(P, Q), X)
+	Xlinha = calculateXlinha(U, V, Line(Plinha, Qlinha))
+
+	print(U)
+	print(V)
+	print Xlinha
 
 	imagemOriginal, imagemDestino = imread("semelhante1.jpg"), imread("semelhante2.jpg")
 
