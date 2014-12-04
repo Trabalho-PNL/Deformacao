@@ -15,6 +15,16 @@ pontosImagemOrigem  = {
 
 }
 
+linhasImagemOrigem = {
+	"cabeca": [ Line(pontosImagemOrigem["cabeca"][index], pontosImagemOrigem["cabeca"][index + 1]) for index in range(0, len(pontosImagemOrigem["cabeca"])-1) ],
+	"maxilar": [Line(pontosImagemOrigem["maxilar"][index], pontosImagemOrigem["maxilar"][index + 1]) for index in range(0, len(pontosImagemOrigem["maxilar"])-1)],
+	"boca": [ Line(pontosImagemOrigem["boca"][index], pontosImagemOrigem["boca"][index + 1]) for index in range(0, len(pontosImagemOrigem["boca"])-1) ],
+	"olhoEsquerdo": [ Line(pontosImagemOrigem["olhoEsquerdo"][index], pontosImagemOrigem["olhoEsquerdo"][index + 1]) for index in range(0, len(pontosImagemOrigem["olhoEsquerdo"])-1) ],
+	"olhoDireito": [ Line(pontosImagemOrigem["olhoDireito"][index], pontosImagemOrigem["olhoDireito"][index + 1]) for index in range(0, len(pontosImagemOrigem["olhoDireito"])-1) ],
+	"nariz": [ Line(pontosImagemOrigem["nariz"][index], pontosImagemOrigem["nariz"][index + 1]) for index in range(0, len(pontosImagemOrigem["nariz"])-1) ],
+	"pescoco": [ Line(pontosImagemOrigem["pescoco"][index], pontosImagemOrigem["pescoco"][index + 1]) for index in range(0, len(pontosImagemOrigem["pescoco"])-1) ]
+}
+
 #semelhante2
 pontosImagemDestino = { 
 	"cabeca": [ Point(107, 85), Point(63, 76), Point(14, 115), Point(5, 167), Point(14, 223), Point(63, 251), Point(107, 252) ],
@@ -24,6 +34,16 @@ pontosImagemDestino = {
 	"olhoDireito": [ Point(135, 180), Point(130, 191), Point(135, 200), Point(140, 191) ],
 	"nariz": [ Point(171, 151), Point(171, 170) ],
 	"pescoco": [ Point(242, 114), Point(275, 123), Point(285, 164), Point(275, 205), Point(242, 222) ]
+}
+
+linhasImagemDestino = {
+	"cabeca": [ Line(pontosImagemDestino["cabeca"][index], pontosImagemDestino["cabeca"][index + 1]) for index in range(0, len(pontosImagemDestino["cabeca"])-1) ],
+	"maxilar": [Line(pontosImagemDestino["maxilar"][index], pontosImagemDestino["maxilar"][index + 1]) for index in range(0, len(pontosImagemDestino["maxilar"])-1)],
+	"boca": [ Line(pontosImagemDestino["boca"][index], pontosImagemDestino["boca"][index + 1]) for index in range(0, len(pontosImagemDestino["boca"])-1) ],
+	"olhoEsquerdo": [ Line(pontosImagemDestino["olhoEsquerdo"][index], pontosImagemDestino["olhoEsquerdo"][index + 1]) for index in range(0, len(pontosImagemDestino["olhoEsquerdo"])-1) ],
+	"olhoDireito": [ Line(pontosImagemDestino["olhoDireito"][index], pontosImagemDestino["olhoDireito"][index + 1]) for index in range(0, len(pontosImagemDestino["olhoDireito"])-1) ],
+	"nariz": [ Line(pontosImagemDestino["nariz"][index], pontosImagemDestino["nariz"][index + 1]) for index in range(0, len(pontosImagemDestino["nariz"])-1) ],
+	"pescoco": [ Line(pontosImagemDestino["pescoco"][index], pontosImagemDestino["pescoco"][index + 1]) for index in range(0, len(pontosImagemDestino["pescoco"])-1) ]
 }
 
 def marcaPontosNaImagem(imagem, jsonPontosMarcados):
