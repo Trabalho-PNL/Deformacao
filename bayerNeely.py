@@ -65,6 +65,33 @@ def calculateV(linhaPQ, pontoX):
 def calculateXlinha(u, v, linhaPQ):
 	return linhaPQ.ponto_inicial + linhaPQ.tamanhoLinha() * u + (linhaPQ.perpendicular() * v)/linhaPQ.tamanhoLinha().norma()
 
+def calcula_ponto_destino(pontoOrigem, linhaMaisProximaOrigem, linhaEquivalenteDestino):
+	U = calculateU(pontoOrigem, linhaMaisProximaOrigem.ponto_inicial, linhaMaisProximaOrigem.ponto_final)
+	V = calculateV(linhaMaisProximaOrigem, pontoOrigem)
+	return calculateXlinha(U, V, linhaEquivalenteDestino)
+
+def encontra_linha_mais_proxima_de_um_ponto_na_imagem_origem(ponto):
+	"""Dado um ponto, ele procura dentre todas as linhas disponiveis qual a mais proxima,
+	e retorna a distancia ate a linha, a qual parte do corpo ela se encontra 
+	e o indice do vetor de linhas ao qual ela pertence, para depois encontrar a linha correspondente 
+	no json de linhas da imagem destino e calcular o ponto de destino do pixel"""
+
+	menorDistanciaEntreLinhaEPonto = float("inf")
+	parteRostoComLinhaMaisProxima = ""
+	indiceVetorDeLinhasDaParteDoCorpoMaisProxima = -1
+
+	for chaveJson in linhasImagemOrigem.keys():
+		for linha in linhasImagemOrigem[chaveJson]:
+			distancia = linha.distanciaPonto(ponto)
+
+			if( distancia < menorDistanciaEntreLinhaEPonto):
+				menorDistanciaEntreLinhaEPonto = distancia
+				parteRostoComLinhaMaisProxima = chaveJson
+				indiceVetorDeLinhasDaParteDoCorpoMaisProxima = linhasImagemOrigem[chaveJson].index(linha)
+
+	return menorDistanciaEntreLinhaEPonto, parteRostoComLinhaMaisProxima, indiceVetorDeLinhasDaParteDoCorpoMaisProxima
+
+
 if __name__ == "__main__":
 
 	X = Point(4.0,3.0)
@@ -88,3 +115,17 @@ if __name__ == "__main__":
 
 	imsave("pontosImagemOriginal.jpg", imagemOriginalComPontosMarcados)
 	imsave("pontosImagemDestino.jpg", imagemDestinoComPontosMarcados)
+
+
+	""" Exemplo de, dado um ponto, sakvar para o mesmo o seu pixel de destino na imagem destino """
+	pontoTeste = Point(212, 264)
+	distancia, chaveJson, indice = encontra_linha_mais_proxima_de_um_ponto_na_imagem_origem(pontoTeste)
+
+	pontoDestino = calcula_ponto_destino(pontoTeste, linhasImagemOrigem[chaveJson][indice], linhasImagemDestino[chaveJson][indice])
+	pontoTeste.salvaPontoDestino(pontoDestino)
+
+
+
+
+
+

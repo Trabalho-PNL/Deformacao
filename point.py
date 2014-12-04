@@ -34,3 +34,6 @@ class Point():
 	def distancia(self, other):
 		direcao = self - other
 		return math.sqrt( direcao.produtoInterno(direcao) )
+
+	def salvaPontoDestino(self, pontoDestino):
+		self.pontoDestino = pontoDestino
