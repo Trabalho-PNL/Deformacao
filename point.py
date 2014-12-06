@@ -36,4 +36,7 @@ class Point():
 		return math.sqrt( direcao.produtoInterno(direcao) )
 
 	def salvaPontoDestino(self, pontoDestino):
+		pontoDestino.x = math.ceil(pontoDestino.x)
+		pontoDestino.y = math.ceil(pontoDestino.y)
+		
 		self.pontoDestino = pontoDestino

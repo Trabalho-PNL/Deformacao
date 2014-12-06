@@ -89,40 +89,35 @@ def encontra_linha_mais_proxima_de_um_ponto_na_imagem_origem(ponto):
 				parteRostoComLinhaMaisProxima = chaveJson
 				indiceVetorDeLinhasDaParteDoCorpoMaisProxima = linhasImagemOrigem[chaveJson].index(linha)
 
-	return menorDistanciaEntreLinhaEPonto, parteRostoComLinhaMaisProxima, indiceVetorDeLinhasDaParteDoCorpoMaisProxima
+	return parteRostoComLinhaMaisProxima, indiceVetorDeLinhasDaParteDoCorpoMaisProxima
+
+def mapeia_todos_pixels_e_armazena_ponto_destino_equivalente(imagemOrigem):
+	alturaImagem, larguraImagem, canais = shape(imagemOrigem)
+
+	conjunto_pontos = []
+
+	for linhaPixel in range(0,alturaImagem):
+		print linhaPixel
+		for colunaPixel in range(0,larguraImagem):
+			pixel = Point(linhaPixel,colunaPixel)
+
+			regiaoDoCorpoMaisProxima, indiceVetorLinhas = encontra_linha_mais_proxima_de_um_ponto_na_imagem_origem(pixel)
+
+			pixelDestino = calcula_ponto_destino(pixel, linhasImagemOrigem[regiaoDoCorpoMaisProxima][indiceVetorLinhas], linhasImagemDestino[regiaoDoCorpoMaisProxima][indiceVetorLinhas])
+			pixel.salvaPontoDestino(pixelDestino)
+
+			conjunto_pontos.append(pixel)
+
+	return conjunto_pontos
 
 
 if __name__ == "__main__":
 
-	X = Point(4.0,3.0)
-	P = Point(2.0,1.0)
-	Q = Point(2.0,4.0)
-	Plinha = Point(5.0, 1.0)
-	Qlinha = Point(5.0, 4.0)
-
-	U = calculateU(X, P, Q)
-	V = calculateV(Line(P, Q), X)
-	Xlinha = calculateXlinha(U, V, Line(Plinha, Qlinha))
-
-	print(U)
-	print(V)
-	print Xlinha
-
 	imagemOriginal, imagemDestino = imread("semelhante1.jpg"), imread("semelhante2.jpg")
 
-	imagemOriginalComPontosMarcados =  marcaPontosNaImagem(imagemOriginal.copy(), pontosImagemOrigem)
-	imagemDestinoComPontosMarcados = marcaPontosNaImagem(imagemDestino.copy(), pontosImagemDestino)
+	pontosMapeados = mapeia_todos_pixels_e_armazena_ponto_destino_equivalente(imagemOriginal)
 
-	imsave("pontosImagemOriginal.jpg", imagemOriginalComPontosMarcados)
-	imsave("pontosImagemDestino.jpg", imagemDestinoComPontosMarcados)
-
-
-	""" Exemplo de, dado um ponto, sakvar para o mesmo o seu pixel de destino na imagem destino """
-	pontoTeste = Point(212, 264)
-	distancia, chaveJson, indice = encontra_linha_mais_proxima_de_um_ponto_na_imagem_origem(pontoTeste)
-
-	pontoDestino = calcula_ponto_destino(pontoTeste, linhasImagemOrigem[chaveJson][indice], linhasImagemDestino[chaveJson][indice])
-	pontoTeste.salvaPontoDestino(pontoDestino)
+	
 
 
 
