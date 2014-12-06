@@ -2,6 +2,7 @@ from numpy import *
 from imageio import mimsave, imsave, imread
 from point import Point
 from line import Line
+import math
 
 #semelhante1
 pontosImagemOrigem  = { 
@@ -65,29 +66,29 @@ def calculateV(linhaPQ, pontoX):
 def calculateXlinha(u, v, linhaPQ):
 	return linhaPQ.ponto_inicial + linhaPQ.tamanhoLinha() * u + (linhaPQ.perpendicular() * v)/linhaPQ.tamanhoLinha().norma()
 
-def calcula_ponto_destino(pontoOrigem, linhaMaisProximaOrigem, linhaEquivalenteDestino):
+def calcula_Xi(pontoOrigem, linhaMaisProximaOrigem, linhaEquivalenteDestino):
 	U = calculateU(pontoOrigem, linhaMaisProximaOrigem.ponto_inicial, linhaMaisProximaOrigem.ponto_final)
 	V = calculateV(linhaMaisProximaOrigem, pontoOrigem)
 	return calculateXlinha(U, V, linhaEquivalenteDestino)
 
-def encontra_linha_mais_proxima_de_um_ponto_na_imagem_origem(ponto):
+def encontra_linha_mais_proxima_de_um_ponto_na_imagem_destino(ponto):
 	"""Dado um ponto, ele procura dentre todas as linhas disponiveis qual a mais proxima,
 	e retorna a distancia ate a linha, a qual parte do corpo ela se encontra 
 	e o indice do vetor de linhas ao qual ela pertence, para depois encontrar a linha correspondente 
-	no json de linhas da imagem destino e calcular o ponto de destino do pixel"""
+	no json de linhas da imagem origem e calcular o ponto de destino do pixel"""
 
 	menorDistanciaEntreLinhaEPonto = float("inf")
 	parteRostoComLinhaMaisProxima = ""
 	indiceVetorDeLinhasDaParteDoCorpoMaisProxima = -1
 
-	for chaveJson in linhasImagemOrigem.keys():
-		for linha in linhasImagemOrigem[chaveJson]:
+	for chaveJson in linhasImagemDestino.keys():
+		for linha in linhasImagemDestino[chaveJson]:
 			distancia = linha.distanciaPonto(ponto)
 
 			if( distancia < menorDistanciaEntreLinhaEPonto):
 				menorDistanciaEntreLinhaEPonto = distancia
 				parteRostoComLinhaMaisProxima = chaveJson
-				indiceVetorDeLinhasDaParteDoCorpoMaisProxima = linhasImagemOrigem[chaveJson].index(linha)
+				indiceVetorDeLinhasDaParteDoCorpoMaisProxima = linhasImagemDestino[chaveJson].index(linha)
 
 	return parteRostoComLinhaMaisProxima, indiceVetorDeLinhasDaParteDoCorpoMaisProxima
 
@@ -115,7 +116,67 @@ if __name__ == "__main__":
 
 	imagemOriginal, imagemDestino = imread("semelhante1.jpg"), imread("semelhante2.jpg")
 
-	pontosMapeados = mapeia_todos_pixels_e_armazena_ponto_destino_equivalente(imagemOriginal)
+	numeroDePassosDeTransicao = 2
+
+	alturaImagem, larguraImagem, canaisCor = shape(imagemDestino)
+
+	imagemTeste = imagemDestino.copy()
+
+	"""Para cada pixel da imagem de destino"""
+	for linhaPixel in range(0, alturaImagem):
+		print "Linha: " + str(linhaPixel)
+		for colunaPixel in range(0, larguraImagem):
+			X = Point(linhaPixel, colunaPixel)
+			DSUM = Point(0,0)
+			weightsum = 0
+
+			"""Para cada linha marcada na imagem destino"""
+			for chaveJson in linhasImagemDestino.keys():
+				for linhaAtualDestino in linhasImagemDestino[chaveJson]:
+					indice = linhasImagemDestino[chaveJson].index(linhaAtualDestino)
+					linhaEquivalenteOrigem = linhasImagemOrigem[chaveJson][indice]
+					
+					"""Calcula U e V"""
+					U = calculateU(X, linhaAtualDestino.ponto_inicial, linhaAtualDestino.ponto_final)
+					V = calculateV(linhaAtualDestino, X)
+
+					"""Calcula Xi' e Yi' """
+					Xi = calculateXlinha(U, V, linhaEquivalenteOrigem)
+					
+					"""Calcula Displacement"""
+					Di = Xi - X
+
+					"""Calcula o peso para essa linha"""
+					if U > 0 and U <  1:
+						dist = abs(V)
+					elif U < 0:
+						dist = X.distancia(linhaAtualDestino.ponto_inicial)
+					else:
+						dist = X.distancia(linhaAtualDestino.ponto_final)
+
+					weight = ( 1 / (0.001 + dist) )**2
+
+					DSUM = DSUM + (Di * weight)
+
+					weightsum = weightsum + weight
+
+			Xlinha = X + DSUM/weightsum
+			
+			if Xlinha.x >= 288:
+				Xlinha.x = 287
+
+			if Xlinha.y >= 384:
+				Xlinha.y = 383
+			
+			imagemTeste[X.x, X.y] = imagemOriginal[Xlinha.x, Xlinha.y]
+
+	imsave("teste.jpg", imagemTeste)
+
+
+
+
+
+
 
 	
 

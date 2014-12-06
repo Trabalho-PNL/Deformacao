@@ -36,7 +36,20 @@ class Point():
 		return math.sqrt( direcao.produtoInterno(direcao) )
 
 	def salvaPontoDestino(self, pontoDestino):
-		pontoDestino.x = math.ceil(pontoDestino.x)
-		pontoDestino.y = math.ceil(pontoDestino.y)
-		
+		pontoDestino.x = int(math.trunc(pontoDestino.x))
+		pontoDestino.y = int(math.trunc(pontoDestino.y))
+
 		self.pontoDestino = pontoDestino
+
+	def distanciaParaOutroPixel(self, pontoDestino):
+		return self.x - pontoDestino.x, self.y - pontoDestino.y
+
+	def ajuste(self):
+		if self.x >= 288:
+			self.x = 287
+
+		if self.y >= 384:
+			self.y = 383
+
+
+		
