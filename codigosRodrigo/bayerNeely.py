@@ -132,7 +132,7 @@ if __name__ == "__main__":
 			DSUM = Point(0,0)
 			weightsum = 0
 
-			linhasInterpoladas = linhasImagemOrigem
+			linhasInterpoladas = linhasImagemDestino
 
 			"""Para cada linha marcada nas linhas interpoladas do passo atual"""
 			for chaveJson in linhasInterpoladas.keys():
@@ -167,18 +167,22 @@ if __name__ == "__main__":
 					weightsum = weightsum + weight
 
 			Xlinha = X + DSUM/weightsum
-
-			print DSUM/weightsum
+			# print "Ponto X: " + str(X)
+			# print "Ponto X': " + str(Xlinha)
 			
 			if Xlinha.x >= 288:
 				Xlinha.x = 287
+			elif Xlinha.x < 0:
+				Xlinha.x = 0
 
 			if Xlinha.y >= 384:
 				Xlinha.y = 383
+			elif Xlinha.y < 0:
+				Xlinha.y = 0
 			
 			imagemTeste[X.x, X.y] = imagemDestino[int(math.trunc(Xlinha.x)), int(math.trunc(Xlinha.y))]
 
-	imsave("teste2.jpg", imagemTeste)
+	imsave("testeLinhasDestino.jpg", imagemTeste)
 
 
 
