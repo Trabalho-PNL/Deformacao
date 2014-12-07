@@ -203,8 +203,6 @@ def merge_imagens():
  	Deve retornar uma lista de imagens, para ser passadas no metodo criaGif"""
 
 def criaGif(nomeArquivo, imagens, duracaoFrames=0.5):
-	'''Binding para a funcao de save da biblioteca imageio, 
-		que recebe a lista de imagens e as salva como um .GIF'''
 	mimsave(nomeArquivo, imagens, 'GIF', duration=duracaoFrames)
 
 
