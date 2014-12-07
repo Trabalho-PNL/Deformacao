@@ -31,7 +31,7 @@ class Line():
 
 	def perpendicular(self):
 		vetorPerpendicular = self.ponto_final - self.ponto_inicial
-		return Point(vetorPerpendicular.y, vetorPerpendicular.x)
+		return Point(vetorPerpendicular.y, -vetorPerpendicular.x)
 
 	def tamanhoLinha(self):
 		return self.ponto_final - self.ponto_inicial

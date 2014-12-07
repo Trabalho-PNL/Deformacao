@@ -5,7 +5,7 @@ from line import Line
 import math
 
 #semelhante1
-pontosImagemOrigem  = { 
+pontosImagemSemelhante1  = { 
 	"cabeca" :  [ Point(128, 67), Point(80, 87), Point(40, 120), Point(30, 170), Point(40, 223), Point(80, 258), Point(128,268) ],
 	"maxilar": [ Point(147, 115), Point(188, 116), Point(220, 132), Point(235, 155), Point(235, 192), Point(220, 209), Point(188, 224), Point(147, 230) ],
 	"boca": [ Point(195, 150), Point(193, 163), Point(192, 173), Point(193, 183), Point(195, 195) ],
@@ -16,18 +16,18 @@ pontosImagemOrigem  = {
 
 }
 
-linhasImagemOrigem = {
-	"cabeca": [ Line(pontosImagemOrigem["cabeca"][index], pontosImagemOrigem["cabeca"][index + 1]) for index in range(0, len(pontosImagemOrigem["cabeca"])-1) ],
-	"maxilar": [Line(pontosImagemOrigem["maxilar"][index], pontosImagemOrigem["maxilar"][index + 1]) for index in range(0, len(pontosImagemOrigem["maxilar"])-1)],
-	"boca": [ Line(pontosImagemOrigem["boca"][index], pontosImagemOrigem["boca"][index + 1]) for index in range(0, len(pontosImagemOrigem["boca"])-1) ],
-	"olhoEsquerdo": [ Line(pontosImagemOrigem["olhoEsquerdo"][index], pontosImagemOrigem["olhoEsquerdo"][index + 1]) for index in range(0, len(pontosImagemOrigem["olhoEsquerdo"])-1) ],
-	"olhoDireito": [ Line(pontosImagemOrigem["olhoDireito"][index], pontosImagemOrigem["olhoDireito"][index + 1]) for index in range(0, len(pontosImagemOrigem["olhoDireito"])-1) ],
-	"nariz": [ Line(pontosImagemOrigem["nariz"][index], pontosImagemOrigem["nariz"][index + 1]) for index in range(0, len(pontosImagemOrigem["nariz"])-1) ],
-	"pescoco": [ Line(pontosImagemOrigem["pescoco"][index], pontosImagemOrigem["pescoco"][index + 1]) for index in range(0, len(pontosImagemOrigem["pescoco"])-1) ]
-}
+linhasImagemSemelhante1 = []
+linhasImagemSemelhante1 = linhasImagemSemelhante1 + [ Line(pontosImagemSemelhante1["cabeca"][index], pontosImagemSemelhante1["cabeca"][index + 1]) for index in range(0, len(pontosImagemSemelhante1["cabeca"])-1) ]
+linhasImagemSemelhante1 = linhasImagemSemelhante1 + [ Line(pontosImagemSemelhante1["maxilar"][index], pontosImagemSemelhante1["maxilar"][index + 1]) for index in range(0, len(pontosImagemSemelhante1["maxilar"])-1)]
+linhasImagemSemelhante1 = linhasImagemSemelhante1 + [ Line(pontosImagemSemelhante1["boca"][index], pontosImagemSemelhante1["boca"][index + 1]) for index in range(0, len(pontosImagemSemelhante1["boca"])-1) ]
+linhasImagemSemelhante1 = linhasImagemSemelhante1 + [ Line(pontosImagemSemelhante1["olhoEsquerdo"][index], pontosImagemSemelhante1["olhoEsquerdo"][index + 1]) for index in range(0, len(pontosImagemSemelhante1["olhoEsquerdo"])-1) ]
+linhasImagemSemelhante1 = linhasImagemSemelhante1 + [ Line(pontosImagemSemelhante1["olhoDireito"][index], pontosImagemSemelhante1["olhoDireito"][index + 1]) for index in range(0, len(pontosImagemSemelhante1["olhoDireito"])-1) ]
+linhasImagemSemelhante1 = linhasImagemSemelhante1 + [ Line(pontosImagemSemelhante1["nariz"][index], pontosImagemSemelhante1["nariz"][index + 1]) for index in range(0, len(pontosImagemSemelhante1["nariz"])-1) ]
+linhasImagemSemelhante1 = linhasImagemSemelhante1 + [ Line(pontosImagemSemelhante1["pescoco"][index], pontosImagemSemelhante1["pescoco"][index + 1]) for index in range(0, len(pontosImagemSemelhante1["pescoco"])-1) ]
+
 
 #semelhante2
-pontosImagemDestino = { 
+pontosImagemSemelhante2 = { 
 	"cabeca": [ Point(107, 85), Point(63, 76), Point(14, 115), Point(5, 167), Point(14, 223), Point(63, 251), Point(107, 252) ],
 	"maxilar": [ Point(132, 107), Point(183, 113), Point(218, 123) ,Point(234, 143), Point(234, 186), Point(218, 202), Point(183, 220), Point(132, 225) ],
 	"boca": [ Point(198, 148), Point(197, 155), Point(197, 162), Point(197, 169), Point(198, 178) ],
@@ -37,26 +37,25 @@ pontosImagemDestino = {
 	"pescoco": [ Point(242, 114), Point(275, 123), Point(285, 164), Point(275, 205), Point(242, 222) ]
 }
 
-linhasImagemDestino = {
-	"cabeca": [ Line(pontosImagemDestino["cabeca"][index], pontosImagemDestino["cabeca"][index + 1]) for index in range(0, len(pontosImagemDestino["cabeca"])-1) ],
-	"maxilar": [Line(pontosImagemDestino["maxilar"][index], pontosImagemDestino["maxilar"][index + 1]) for index in range(0, len(pontosImagemDestino["maxilar"])-1)],
-	"boca": [ Line(pontosImagemDestino["boca"][index], pontosImagemDestino["boca"][index + 1]) for index in range(0, len(pontosImagemDestino["boca"])-1) ],
-	"olhoEsquerdo": [ Line(pontosImagemDestino["olhoEsquerdo"][index], pontosImagemDestino["olhoEsquerdo"][index + 1]) for index in range(0, len(pontosImagemDestino["olhoEsquerdo"])-1) ],
-	"olhoDireito": [ Line(pontosImagemDestino["olhoDireito"][index], pontosImagemDestino["olhoDireito"][index + 1]) for index in range(0, len(pontosImagemDestino["olhoDireito"])-1) ],
-	"nariz": [ Line(pontosImagemDestino["nariz"][index], pontosImagemDestino["nariz"][index + 1]) for index in range(0, len(pontosImagemDestino["nariz"])-1) ],
-	"pescoco": [ Line(pontosImagemDestino["pescoco"][index], pontosImagemDestino["pescoco"][index + 1]) for index in range(0, len(pontosImagemDestino["pescoco"])-1) ]
-}
+linhasImagemSemelhante2 = []
+linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["cabeca"][index], pontosImagemSemelhante2["cabeca"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["cabeca"])-1) ]
+linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["maxilar"][index], pontosImagemSemelhante2["maxilar"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["maxilar"])-1) ]
+linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["boca"][index], pontosImagemSemelhante2["boca"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["boca"])-1) ]
+linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["olhoEsquerdo"][index], pontosImagemSemelhante2["olhoEsquerdo"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["olhoEsquerdo"])-1) ]
+linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["olhoDireito"][index], pontosImagemSemelhante2["olhoDireito"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["olhoDireito"])-1) ]
+linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["nariz"][index], pontosImagemSemelhante2["nariz"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["nariz"])-1) ]
+linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["pescoco"][index], pontosImagemSemelhante2["pescoco"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["pescoco"])-1) ]
 
-def marcaPontosNaImagem(imagem, jsonPontosMarcados):
 
-	canaisImagem = shape(imagem)[2]
 
-	for key in jsonPontosMarcados:
-		for pontoInteresse in jsonPontosMarcados[key]:
-			for canal in range(canaisImagem):
-				imagem[pontoInteresse.x, pontoInteresse.y, canal] = 255
+conjuntoLinhasInterpoladas = [linhasImagemSemelhante1]
 
-	return imagem
+"""Aqui devem ser adicionadas a lista todas os conjuntos de linhas interpoladas que quisermos. Tem que ver como calcular
+as linhas interpoladas a partir das linhas das imagens que ja temos. Nao esquecer que a ordem de cada linha na lista e relevante.
+A primeira linha da lista deve ser 'equivalente' a primeira linha de todas as outras, e assim por diante.  """
+
+conjuntoLinhasInterpoladas.append(linhasImagemSemelhante2)
+
 
 def calculateU(pontoX, pontoP, pontoQ):
 	return ((pontoX - pontoP).produtoEscalar(pontoQ - pontoP))/(pontoQ - pontoP).norma()**2
@@ -66,93 +65,43 @@ def calculateV(linhaPQ, pontoX):
 def calculateXlinha(u, v, linhaPQ):
 	return linhaPQ.ponto_inicial + linhaPQ.tamanhoLinha() * u + (linhaPQ.perpendicular() * v)/linhaPQ.tamanhoLinha().norma()
 
-def calcula_Xi(pontoOrigem, linhaMaisProximaOrigem, linhaEquivalenteDestino):
-	U = calculateU(pontoOrigem, linhaMaisProximaOrigem.ponto_inicial, linhaMaisProximaOrigem.ponto_final)
-	V = calculateV(linhaMaisProximaOrigem, pontoOrigem)
-	return calculateXlinha(U, V, linhaEquivalenteDestino)
+def gera_imagens_semelhante1():
+	imagemSource = imread("semelhante1.jpg")
 
-def encontra_linha_mais_proxima_de_um_ponto_na_imagem_destino(ponto):
-	"""Dado um ponto, ele procura dentre todas as linhas disponiveis qual a mais proxima,
-	e retorna a distancia ate a linha, a qual parte do corpo ela se encontra 
-	e o indice do vetor de linhas ao qual ela pertence, para depois encontrar a linha correspondente 
-	no json de linhas da imagem origem e calcular o ponto de destino do pixel"""
+	alturaImagem, larguraImagem, _ = shape(imagemSource)
 
-	menorDistanciaEntreLinhaEPonto = float("inf")
-	parteRostoComLinhaMaisProxima = ""
-	indiceVetorDeLinhasDaParteDoCorpoMaisProxima = -1
+	imagemDeformada = imagemSource.copy()
+	contador = 1
 
-	for chaveJson in linhasImagemDestino.keys():
-		for linha in linhasImagemDestino[chaveJson]:
-			distancia = linha.distanciaPonto(ponto)
+	for linhasInterpoladas in conjuntoLinhasInterpoladas:
+		for linhaPixel in range(0, alturaImagem):
+			print "Linha: " + str(linhaPixel)
+			for colunaPixel in range(0, larguraImagem):
+				X = Point(linhaPixel, colunaPixel)
+				DSUM = Point(0,0)
+				weightsum = 0
 
-			if( distancia < menorDistanciaEntreLinhaEPonto):
-				menorDistanciaEntreLinhaEPonto = distancia
-				parteRostoComLinhaMaisProxima = chaveJson
-				indiceVetorDeLinhasDaParteDoCorpoMaisProxima = linhasImagemDestino[chaveJson].index(linha)
-
-	return parteRostoComLinhaMaisProxima, indiceVetorDeLinhasDaParteDoCorpoMaisProxima
-
-def mapeia_todos_pixels_e_armazena_ponto_destino_equivalente(imagemOrigem):
-	alturaImagem, larguraImagem, canais = shape(imagemOrigem)
-
-	conjunto_pontos = []
-
-	for linhaPixel in range(0,alturaImagem):
-		print linhaPixel
-		for colunaPixel in range(0,larguraImagem):
-			pixel = Point(linhaPixel,colunaPixel)
-
-			regiaoDoCorpoMaisProxima, indiceVetorLinhas = encontra_linha_mais_proxima_de_um_ponto_na_imagem_origem(pixel)
-
-			pixelDestino = calcula_ponto_destino(pixel, linhasImagemOrigem[regiaoDoCorpoMaisProxima][indiceVetorLinhas], linhasImagemDestino[regiaoDoCorpoMaisProxima][indiceVetorLinhas])
-			pixel.salvaPontoDestino(pixelDestino)
-
-			conjunto_pontos.append(pixel)
-
-	return conjunto_pontos
-
-
-if __name__ == "__main__":
-
-	imagemOriginal, imagemDestino = imread("semelhante1.jpg"), imread("semelhante2.jpg")
-
-	numeroDePassosDeTransicao = 2
-
-	alturaImagem, larguraImagem, canaisCor = shape(imagemDestino)
-
-	imagemTeste = imagemDestino.copy()
-
-	"""Para cada pixel da imagem de destino"""
-	for linhaPixel in range(0, alturaImagem):
-		print "Linha: " + str(linhaPixel)
-		for colunaPixel in range(0, larguraImagem):
-			X = Point(linhaPixel, colunaPixel)
-			DSUM = Point(0,0)
-			weightsum = 0
-
-			"""Para cada linha marcada na imagem destino"""
-			for chaveJson in linhasImagemDestino.keys():
-				for linhaAtualDestino in linhasImagemDestino[chaveJson]:
-					indice = linhasImagemDestino[chaveJson].index(linhaAtualDestino)
-					linhaEquivalenteOrigem = linhasImagemOrigem[chaveJson][indice]
+				for linhaAtualInterpolada in linhasInterpoladas:
 					
-					"""Calcula U e V"""
-					U = calculateU(X, linhaAtualDestino.ponto_inicial, linhaAtualDestino.ponto_final)
-					V = calculateV(linhaAtualDestino, X)
-
-					"""Calcula Xi' e Yi' """
-					Xi = calculateXlinha(U, V, linhaEquivalenteOrigem)
+					indice = linhasInterpoladas.index(linhaAtualInterpolada)
 					
-					"""Calcula Displacement"""
+					linhaEquivalenteEmSemelhante1 = linhasImagemSemelhante1[indice]
+					
+					
+					U = calculateU(X, linhaAtualInterpolada.ponto_inicial, linhaAtualInterpolada.ponto_final)
+					V = calculateV(linhaAtualInterpolada, X)
+
+					
+					Xi = calculateXlinha(U, V, linhaEquivalenteEmSemelhante1)
+					
 					Di = Xi - X
-
-					"""Calcula o peso para essa linha"""
+					
 					if U > 0 and U <  1:
 						dist = abs(V)
 					elif U < 0:
-						dist = X.distancia(linhaAtualDestino.ponto_inicial)
+						dist = X.distancia(linhaAtualInterpolada.ponto_inicial)
 					else:
-						dist = X.distancia(linhaAtualDestino.ponto_final)
+						dist = X.distancia(linhaAtualInterpolada.ponto_final)
 
 					weight = ( 1 / (0.001 + dist) )**2
 
@@ -160,17 +109,113 @@ if __name__ == "__main__":
 
 					weightsum = weightsum + weight
 
-			Xlinha = X + DSUM/weightsum
-			
-			if Xlinha.x >= 288:
-				Xlinha.x = 287
+				Xlinha = X + DSUM/weightsum
+				
+				# para evitar inconsistencias e pegar valores inexistentes
+				if Xlinha.x >= 288:
+					Xlinha.x = 287
+				elif Xlinha.x < 0:
+					Xlinha.x = 0
 
-			if Xlinha.y >= 384:
-				Xlinha.y = 383
-			
-			imagemTeste[X.x, X.y] = imagemOriginal[Xlinha.x, Xlinha.y]
+				if Xlinha.y >= 384:
+					Xlinha.y = 383
+				elif Xlinha.y < 0:
+					Xlinha.y = 0
+				
+				imagemDeformada[X.x, X.y] = imagemSource[int(math.trunc(Xlinha.x)), int(math.trunc(Xlinha.y))]
 
-	imsave("teste.jpg", imagemTeste)
+
+		nomeImagem = "imagensSemelhante1_passo"+ str(contador) + ".jpg"
+		imsave(nomeImagem, imagemDeformada)
+
+		contador = contador + 1
+
+
+def gera_imagens_semelhante2():
+
+	"""Aqui eu dei ctrl c ctrl v da outra funcao. Conferir se eu nao esqueci de renomear alguma variavel"""
+	imagemSource = imread("semelhante2.jpg")
+
+	alturaImagem, larguraImagem, _ = shape(imagemSource)
+
+	imagemDeformada = imagemSource.copy()
+	contador = 1
+
+	for linhasInterpoladas in conjuntoLinhasInterpoladas:
+		for linhaPixel in range(0, alturaImagem):
+			print "Linha: " + str(linhaPixel)
+			for colunaPixel in range(0, larguraImagem):
+				X = Point(linhaPixel, colunaPixel)
+				DSUM = Point(0,0)
+				weightsum = 0
+
+				for linhaAtualInterpolada in linhasInterpoladas:
+					
+					indice = linhasInterpoladas.index(linhaAtualInterpolada)
+					
+					linhaEquivalenteEmSemelhante2 = linhasImagemSemelhante2[indice]
+					
+					
+					U = calculateU(X, linhaAtualInterpolada.ponto_inicial, linhaAtualInterpolada.ponto_final)
+					V = calculateV(linhaAtualInterpolada, X)
+
+					
+					Xi = calculateXlinha(U, V, linhaEquivalenteEmSemelhante2)
+					
+					Di = Xi - X
+					
+					if U > 0 and U <  1:
+						dist = abs(V)
+					elif U < 0:
+						dist = X.distancia(linhaAtualInterpolada.ponto_inicial)
+					else:
+						dist = X.distancia(linhaAtualInterpolada.ponto_final)
+
+					weight = ( 1 / (0.001 + dist) )**2
+
+					DSUM = DSUM + (Di * weight)
+
+					weightsum = weightsum + weight
+
+				Xlinha = X + DSUM/weightsum
+				
+				# para evitar inconsistencias e pegar valores inexistentes
+				if Xlinha.x >= 288:
+					Xlinha.x = 287
+				elif Xlinha.x < 0:
+					Xlinha.x = 0
+
+				if Xlinha.y >= 384:
+					Xlinha.y = 383
+				elif Xlinha.y < 0:
+					Xlinha.y = 0
+				
+				imagemDeformada[X.x, X.y] = imagemSource[int(math.trunc(Xlinha.x)), int(math.trunc(Xlinha.y))]
+
+
+		nomeImagem = "imagensSemelhante2_passo"+ str(contador) + ".jpg"
+		imsave(nomeImagem, imagemDeformada)
+
+		contador = contador + 1
+
+def merge_imagens():
+	"""Funcao que deve pegar duas imagens que foram deformadas pela mesma interpolacao de linhas e fazer o merge delas.
+ 	Deve retornar uma lista de imagens, para ser passadas no metodo criaGif"""
+
+def criaGif(nomeArquivo, imagens, duracaoFrames=0.5):
+	'''Binding para a funcao de save da biblioteca imageio, 
+		que recebe a lista de imagens e as salva como um .GIF'''
+	mimsave(nomeArquivo, imagens, 'GIF', duration=duracaoFrames)
+
+
+if __name__ == "__main__":
+	gera_imagens_semelhante1()
+
+	gera_imagens_semelhante2()
+	
+	"""Descomentar quando estiver com o metodo merge_imagens pronto"""
+	# listaImagens = merge_imagens()
+	# criaGif("transformacaoMorfologica.gif", listaImagens)
 
 
 
