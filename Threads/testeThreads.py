@@ -1,8 +1,7 @@
-from numpy import *
-from imageio import mimsave, imsave, imread
 from point import Point
 from line import Line
 import math
+from classBayerNeely import BayerNeely
 
 #semelhante1
 pontosImagemSemelhante1  = { 
@@ -46,8 +45,8 @@ linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhan
 linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["nariz"][index], pontosImagemSemelhante2["nariz"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["nariz"])-1) ]
 linhasImagemSemelhante2 = linhasImagemSemelhante2 +  [ Line(pontosImagemSemelhante2["pescoco"][index], pontosImagemSemelhante2["pescoco"][index + 1]) for index in range(0, len(pontosImagemSemelhante2["pescoco"])-1) ]
 
-"""Numero de imagens alem das duas originais"""
-numeroImagensIntermediarias = 4 
+
+numeroImagensIntermediarias = 4
 conjuntoLinhasInterpoladas = []
 
 for passo in range(0, numeroImagensIntermediarias+2):
@@ -65,175 +64,25 @@ for passo in range(0, numeroImagensIntermediarias+2):
 	conjuntoLinhasInterpoladas.append(interpolacao)
 
 
-def calculateU(pontoX, pontoP, pontoQ):
-	return ((pontoX - pontoP).produtoEscalar(pontoQ - pontoP))/(pontoQ - pontoP).norma()**2
-
-def calculateV(linhaPQ, pontoX):
-	return (pontoX - linhaPQ.ponto_inicial).produtoEscalar(linhaPQ.perpendicular())/(linhaPQ.ponto_inicial - linhaPQ.ponto_final).norma()
-def calculateXlinha(u, v, linhaPQ):
-	return linhaPQ.ponto_inicial + linhaPQ.tamanhoLinha() * u + (linhaPQ.perpendicular() * v)/linhaPQ.tamanhoLinha().norma()
-
-def gera_imagens_semelhante1():
-	imagemSource = imread("semelhante1.jpg")
-
-	alturaImagem, larguraImagem, _ = shape(imagemSource)
-
-	imagemDeformada = imagemSource.copy()
-	contador = 1
-
-	for linhasInterpoladas in conjuntoLinhasInterpoladas:
-		for linhaPixel in range(0, alturaImagem):
-			print "Imagem semelhante1, interpolacao: " + str(contador) + " Linha: " + str(linhaPixel)
-			for colunaPixel in range(0, larguraImagem):
-				X = Point(linhaPixel, colunaPixel)
-				DSUM = Point(0,0)
-				weightsum = 0
-
-				for linhaAtualInterpolada in linhasInterpoladas:
-					
-					indice = linhasInterpoladas.index(linhaAtualInterpolada)
-					
-					linhaEquivalenteEmSemelhante1 = linhasImagemSemelhante1[indice]
-					
-					
-					U = calculateU(X, linhaAtualInterpolada.ponto_inicial, linhaAtualInterpolada.ponto_final)
-					V = calculateV(linhaAtualInterpolada, X)
-
-					
-					Xi = calculateXlinha(U, V, linhaEquivalenteEmSemelhante1)
-					
-					Di = Xi - X
-					
-					if U > 0 and U <  1:
-						dist = abs(V)
-					elif U < 0:
-						dist = X.distancia(linhaAtualInterpolada.ponto_inicial)
-					else:
-						dist = X.distancia(linhaAtualInterpolada.ponto_final)
-
-					weight = ( 1 / (0.001 + dist) )**2
-
-					DSUM = DSUM + (Di * weight)
-
-					weightsum = weightsum + weight
-
-				Xlinha = X + DSUM/weightsum
-				
-				# para evitar inconsistencias e pegar valores inexistentes
-				if Xlinha.x >= 288:
-					Xlinha.x = 287
-				elif Xlinha.x < 0:
-					Xlinha.x = 0
-
-				if Xlinha.y >= 384:
-					Xlinha.y = 383
-				elif Xlinha.y < 0:
-					Xlinha.y = 0
-				
-				imagemDeformada[X.x, X.y] = imagemSource[int(math.trunc(Xlinha.x)), int(math.trunc(Xlinha.y))]
-
-
-		nomeImagem = "imagens_semelhante1/deformacao_passo"+ str(contador) + ".jpg"
-		imsave(nomeImagem, imagemDeformada)
-
-		contador = contador + 1
-
-
-def gera_imagens_semelhante2():
-
-	"""Aqui eu dei ctrl c ctrl v da outra funcao. Conferir se eu nao esqueci de renomear alguma variavel"""
-	imagemSource = imread("semelhante2.jpg")
-
-	alturaImagem, larguraImagem, _ = shape(imagemSource)
-
-	imagemDeformada = imagemSource.copy()
-	contador = 1
-
-	for linhasInterpoladas in conjuntoLinhasInterpoladas:
-		for linhaPixel in range(0, alturaImagem):
-			print "Imagem semelhante2, interpolacao: " + str(contador) + " Linha: " + str(linhaPixel)
-			for colunaPixel in range(0, larguraImagem):
-				X = Point(linhaPixel, colunaPixel)
-				DSUM = Point(0,0)
-				weightsum = 0
-
-				for linhaAtualInterpolada in linhasInterpoladas:
-					
-					indice = linhasInterpoladas.index(linhaAtualInterpolada)
-					
-					linhaEquivalenteEmSemelhante2 = linhasImagemSemelhante2[indice]
-					
-					
-					U = calculateU(X, linhaAtualInterpolada.ponto_inicial, linhaAtualInterpolada.ponto_final)
-					V = calculateV(linhaAtualInterpolada, X)
-
-					
-					Xi = calculateXlinha(U, V, linhaEquivalenteEmSemelhante2)
-					
-					Di = Xi - X
-					
-					if U > 0 and U <  1:
-						dist = abs(V)
-					elif U < 0:
-						dist = X.distancia(linhaAtualInterpolada.ponto_inicial)
-					else:
-						dist = X.distancia(linhaAtualInterpolada.ponto_final)
-
-					weight = ( 1 / (0.001 + dist) )**2
-
-					DSUM = DSUM + (Di * weight)
-
-					weightsum = weightsum + weight
-
-				Xlinha = X + DSUM/weightsum
-				
-				# para evitar inconsistencias e pegar valores inexistentes
-				if Xlinha.x >= 288:
-					Xlinha.x = 287
-				elif Xlinha.x < 0:
-					Xlinha.x = 0
-
-				if Xlinha.y >= 384:
-					Xlinha.y = 383
-				elif Xlinha.y < 0:
-					Xlinha.y = 0
-				
-				imagemDeformada[X.x, X.y] = imagemSource[int(math.trunc(Xlinha.x)), int(math.trunc(Xlinha.y))]
-
-
-		nomeImagem = "imagens_semelhante2/deformacao_passo"+ str(contador) + ".jpg"
-		imsave(nomeImagem, imagemDeformada)
-
-		contador = contador + 1
-
-def merge_imagens():
-	"""Funcao que deve pegar duas imagens que foram deformadas pela mesma interpolacao de linhas e fazer o merge delas.
- 	Deve retornar uma lista de imagens, para ser passadas no metodo criaGif"""
-
-def criaGif(nomeArquivo, imagens, duracaoFrames=0.5):
-	mimsave(nomeArquivo, imagens, 'GIF', duration=duracaoFrames)
-
 
 if __name__ == "__main__":
 
-	gera_imagens_semelhante1()
-
-	gera_imagens_semelhante2()
-
-	"""Descomentar quando estiver com o metodo merge_imagens pronto"""
-	# listaImagens = merge_imagens()
-	# criaGif("transformacaoMorfologica.gif", listaImagens)
-
-
-
-
-
-
-
+	contador = 1
+	threadsSemelhante1 = []
+	threadsSemelhante2 = []
 	
+	for linhasInterpoladas in conjuntoLinhasInterpoladas:
 
+		deformacao1 =  BayerNeely("semelhante1", linhasImagemSemelhante1, linhasInterpoladas, contador)
+		deformacao2 = BayerNeely("semelhante2", linhasImagemSemelhante2, linhasInterpoladas, contador)
 
+		threadsSemelhante1.append(deformacao1)
+		threadsSemelhante2.append(deformacao2)
 
+		contador = contador + 1
 
+	[thread.start() for thread in threadsSemelhante1]
+	[thread.join() for thread in threadsSemelhante1]
 
-
+	[thread.start() for thread in threadsSemelhante2]
+	[thread.join() for thread in threadsSemelhante2]
