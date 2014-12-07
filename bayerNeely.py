@@ -140,8 +140,6 @@ def gera_imagens_semelhante1():
 
 
 def gera_imagens_semelhante2():
-
-	"""Aqui eu dei ctrl c ctrl v da outra funcao. Conferir se eu nao esqueci de renomear alguma variavel"""
 	imagemSource = imread("semelhante2.jpg")
 
 	alturaImagem, larguraImagem, _ = shape(imagemSource)
@@ -207,9 +205,6 @@ def gera_imagens_semelhante2():
 		contador = contador + 1
 
 def merge_imagens():
-	"""Funcao que deve pegar duas imagens que foram deformadas pela mesma interpolacao de linhas e fazer o merge delas.
- 	Deve retornar uma lista de imagens, para ser passadas no metodo criaGif"""
-
  	listaImagensMergeadas = []
 
  	for passo in range(0, numeroImagensIntermediarias + 2):
@@ -226,6 +221,7 @@ def merge_imagens():
  				imagemMergeada[linhaPixel, colunaPixel] = (1 - t) * imagemDeformada1[linhaPixel, colunaPixel] + (t) * imagemDeformada2[linhaPixel, colunaPixel]
 
 
+		imsave("imagensMedias/imagemMediaPasso" + str(passo) + ".jpg", imagemMergeada)
 		listaImagensMergeadas.append(imagemMergeada)
 
 	return listaImagensMergeadas
@@ -235,12 +231,9 @@ def criaGif(nomeArquivo, imagens, duracaoFrames=0.5):
 
 
 if __name__ == "__main__":
-
 	gera_imagens_semelhante1()
-
 	gera_imagens_semelhante2()
 
-	"""Descomentar quando estiver com o metodo merge_imagens pronto"""
 	listaImagens = merge_imagens()
 	criaGif("transformacaoMorfologica.gif", listaImagens)
 
