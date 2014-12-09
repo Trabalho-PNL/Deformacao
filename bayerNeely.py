@@ -57,8 +57,10 @@ for passo in range(0, numeroImagensIntermediarias+2):
 		linhaOriginalSemelhante1 = linhasImagemSemelhante1[indiceVetor]
 		linhaOriginalSemelhante2 = linhasImagemSemelhante2[indiceVetor]
 
-		pontoInicialLinhaInterpolada = linhaOriginalSemelhante1.ponto_inicial + (linhaOriginalSemelhante2.ponto_inicial - linhaOriginalSemelhante1.ponto_inicial) * passo  / numeroImagensIntermediarias
-		pontoFinalLinhaInterpolada = linhaOriginalSemelhante1.ponto_final + (linhaOriginalSemelhante2.ponto_final - linhaOriginalSemelhante1.ponto_final) * passo / numeroImagensIntermediarias
+		t = float(passo)/(numeroImagensIntermediarias+1)
+		pontoInicialLinhaInterpolada = linhaOriginal1.ponto_inicial*(1-t) + linhaOriginal2.ponto_inicial*t
+		pontoFinalLinhaInterpolada = linhaOriginal1.ponto_final*(1-t) + linhaOriginal2.ponto_final*t
+
 
 		interpolacao.append(Line(pontoInicialLinhaInterpolada, pontoFinalLinhaInterpolada))
 
