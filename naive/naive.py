@@ -1,8 +1,10 @@
+import sys
+sys.path.insert(0,'..')
 from numpy import *
 from imageio import imread, imsave, mimsave
 from point import Point
 from line import Line
-import sys
+
 
 #Imagem 1
 pontosImagem1  = { 
@@ -53,22 +55,38 @@ def calculateU(pontoX, pontoP, pontoQ):
 def calculateV(linhaPQ, pontoX):
     return (pontoX - linhaPQ.ponto_inicial).produtoEscalar(linhaPQ.perpendicular())/(linhaPQ.ponto_inicial - linhaPQ.ponto_final).norma()
 
-def pixel(U,V,linha):
+def pixel(U,V,linha, imagem):
+    altura, largura, _ = shape(imagem)
     pontoNaLinha =  linha.ponto_inicial*(1-U) + linha.ponto_final*U
     pontoPerpendicular = linha.perpendicular()
     X = pontoNaLinha + ((pontoPerpendicular/pontoPerpendicular.norma())*V)
-
-
+    
     X.x,restoXx = divmod(X.x,1)
     X.y,restoXy = divmod(X.y,1)
 
-    if restoXx > 0.5:
-        X.x += 1
-
-    if restoXy > 0.5:
-        X.y += 1
     X.x, X.y = X.y, X.x
-    return X
+    Q2 = Point(-1,-1)
+    X.x = largura - 1 if (X.x > largura - 1) else X.x
+    X.y = altura - 1 if (X.y > altura - 1) else X.y
+    if X.x == largura - 1:
+        restoXx = 0
+        Q3 = Point(0,0)
+        Q2 = Point(0,0)
+    else: 
+        Q3 = Point(X.x+1,X.y)
+    if X.y == altura-1:
+        restoXy = 0
+        Q1 = Point(0,0)
+        Q2 = Point(0,0)
+    else:
+        Q1 = Point(X.x,X.y+1)
+
+    if Q2.x == Q2.y == -1:
+        Q2 = Point(X.x+1,X.y+1)
+
+    R2 = [imagem[Q1.y,Q1.x,k]*(1-restoXx) + imagem[Q2.y,Q2.x,k]*restoXx for k in range(3)]
+    R1 = [imagem[X.y,X.x,k]*(1-restoXx) + imagem[Q3.y,Q3.x,k]*restoXx for k in range(3)]
+    return [R1[k]*(1-restoXy) + R2[k]*restoXy for k in range(3)]
 
 numeroImagensIntermediarias = int(sys.argv[3])
 conjuntoLinhasInterpoladas = []
@@ -80,8 +98,9 @@ for passo in range(0, numeroImagensIntermediarias+2):
         linhaOriginal1 = linhasImagem1[indiceVetor]
         linhaOriginal2 = linhasImagem2[indiceVetor]
 
-        pontoInicialLinhaInterpolada = linhaOriginal1.ponto_inicial + (linhaOriginal2.ponto_inicial - linhaOriginal1.ponto_inicial) * passo  / numeroImagensIntermediarias
-        pontoFinalLinhaInterpolada = linhaOriginal1.ponto_final + (linhaOriginal2.ponto_final - linhaOriginal1.ponto_final) * passo / numeroImagensIntermediarias
+        t = float(passo)/(numeroImagensIntermediarias+1)
+        pontoInicialLinhaInterpolada = linhaOriginal1.ponto_inicial*(1-t) + linhaOriginal2.ponto_inicial*t
+        pontoFinalLinhaInterpolada = linhaOriginal1.ponto_final*(1-t) + linhaOriginal2.ponto_final*t
 
         interpolacao.append(Line(pontoInicialLinhaInterpolada, pontoFinalLinhaInterpolada))
 
@@ -124,18 +143,11 @@ for passo, linhasInterpoladas in enumerate(conjuntoLinhasInterpoladas):
                     distFinal = dist
                     numLinhaFinal = numLinha
 
-            Xlinha = pixel(Ufinal,Vfinal,conjuntoLinhasInterpoladas[0][numLinhaFinal])
-            X2linha = pixel(Ufinal,Vfinal,conjuntoLinhasInterpoladas[numeroImagensIntermediarias+1][numLinhaFinal])
-            if Xlinha.x >= larguraImagem: 
-                Xlinha.x = larguraImagem-1
-            if Xlinha.y >= alturaImagem: 
-                Xlinha.y = alturaImagem-1
-            if X2linha.x >= larguraImagem: 
-                X2linha.x = larguraImagem-1
-            if X2linha.y >= alturaImagem: 
-                X2linha.y = alturaImagem-1
+            Xlinha = pixel(Ufinal,Vfinal,conjuntoLinhasInterpoladas[0][numLinhaFinal],imagemSrc)
+            X2linha = pixel(Ufinal,Vfinal,conjuntoLinhasInterpoladas[numeroImagensIntermediarias+1][numLinhaFinal],imagemDest)
+            
             t = float(passo)/numeroImagensIntermediarias
-            imagemDeformada[i,j] = [(1-t)*imagemSrc[Xlinha.y,Xlinha.x,k] + t*imagemDest[X2linha.y,X2linha.x,k] for k in range(3)]
+            imagemDeformada[i,j] = [(1-t)*Xlinha[k] + t*X2linha[k] for k in range(3)]
     # imagensIntermediarias[passo] = imagemDeformada
 
     nomeImagem = "imagem" + str(passo)  + ".jpg"
